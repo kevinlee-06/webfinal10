@@ -1,4 +1,3 @@
-# init_db.py 或整合進 app.py
 from app import app
 from models import db, User, Space, Resource, Permission
 from werkzeug.security import generate_password_hash
