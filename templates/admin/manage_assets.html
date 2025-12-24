@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="asset-manager">
+    <header class="panel-header">
+        <h3 class="panel-title"><i class="bi bi-cpu-fill"></i> 空間與資源列表</h3>
+        <p class="panel-subtitle">管理您的資產公開狀態與階層關係</p>
+        <br>
+        <button class="btn-pink btn-sm" onclick="openModal('addSpaceModal')">
+            <i class="bi bi-plus-lg"></i> 新增空間
+        </button>
+    </header>
+
+    {% for space in spaces %}
+    <section class="asset-card">
+        <div class="card-top">
+            <div class="space-title">
+                <h4>{{ space.name }}</h4>
+                <span class="status-tag {{ 'hidden' if space.is_hidden else 'public' }}">
+                    {{ '隱藏中' if space.is_hidden else '公開中' }}
+                </span>
+            </div>
+            <div class="card-actions">
+                <button class="btn-outline-pink btn-xs me-1" onclick="openModal('editSpaceModal{{ space.id }}')">
+                    <i class="bi bi-pencil"></i>
+                </button>
+
+                <form action="{{ url_for('delete_space', space_id=space.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-outline-pink btn-xs text-danger"
+                        onclick="return confirm('警告：刪除空間將連帶刪除所屬所有資源，確定嗎？')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
+                <a href="{{ url_for('toggle_space_visibility', space_id=space.id) }}" class="btn-outline-pink btn-xs">
+                    <i class="bi bi-eye{{ '-slash' if not space.is_hidden }}"></i>
+                </a>
+            </div>
+        </div>
+
+        <div id="editSpaceModal{{ space.id }}" class="custom-modal">
+            <div class="modal-content-pink">
+                <header class="modal-header">
+                    <h5>編輯空間：{{ space.name }}</h5>
+                    <span class="close" onclick="closeModal('editSpaceModal{{ space.id }}')">&times;</span>
+                </header>
+                <form action="{{ url_for('edit_space', space_id=space.id) }}" method="POST">
+                    <div class="input-group">
+                        <label>空間名稱</label>
+                        <input type="text" name="name" value="{{ space.name }}" required>
+                    </div>
+                    <div class="input-group">
+                        <label>說明文字</label>
+                        <textarea name="description" rows="3">{{ space.description }}</textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>圖片網址 (URL)</label>
+                        <input type="text" name="image_url" value="{{ space.image_url }}">
+                    </div>
+                    <button type="submit" class="btn-pink w-100">更新空間資訊</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="asset-table">
+                <thead>
+                    <tr>
+                        <th>資源名稱</th>
+                        <th>類型</th>
+                        <th>狀態切換</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in space.resources %}
+                    <tr class="{{ 'row-hidden' if res.is_hidden }}">
+                        <td><strong>{{ res.name }}</strong></td>
+                        <td><span class="type-badge">{{ res.resource_type }}</span></td>
+                        <td>
+                            <label class="pink-switch">
+                                <input type="checkbox" {% if not res.is_hidden %}checked{% endif %}
+                                    onchange="location.href=`{{ url_for('toggle_resource', res_id=res.id) }}`">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="icon-actions">
+                                <button title="編輯" onclick="openModal('editResModal{{ res.id }}')">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <form action="{{ url_for('delete_resource', res_id=res.id) }}" method="POST"
+                                    style="display:inline;">
+                                    <button type="submit" class="text-danger" title="刪除"
+                                        onclick="return confirm('確定要刪除資源「{{ res.name }}」嗎？')">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div id="editResModal{{ res.id }}" class="custom-modal">
+                                <div class="modal-content-pink">
+                                    <header class="modal-header">
+                                        <h5>編輯資源：{{ res.name }}</h5>
+                                        <span class="close"
+                                            onclick="closeModal('editResModal{{ res.id }}')">&times;</span>
+                                    </header>
+                                    <form action="{{ url_for('edit_resource', res_id=res.id) }}" method="POST">
+                                        <div class="input-group">
+                                            <label>資源名稱</label>
+                                            <input type="text" name="name" value="{{ res.name }}" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>資源類型</label>
+                                            <select name="resource_type">
+                                                <option value="座位" {% if res.resource_type=='座位' %}selected{% endif %}>
+                                                    座位</option>
+                                                <option value="電腦" {% if res.resource_type=='電腦' %}selected{% endif %}>
+                                                    電腦</option>
+                                                <option value="會議室" {% if res.resource_type=='會議室' %}selected{% endif
+                                                    %}>會議室</option>
+                                                <option value="其他設備" {% if res.resource_type=='其他設備' %}selected{% endif
+                                                    %}>其他設備</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>描述文字</label>
+                                            <textarea name="description" rows="2">{{ res.description }}</textarea>
+                                        </div>
+                                        <button type="submit" class="btn-pink w-100">更新資源</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="card-footer">
+            <button class="btn-text-pink" onclick="openModal('addResourceModal{{ space.id }}')">
+                <i class="bi bi-plus-circle"></i> 為此空間新增資源
+            </button>
+        </footer>
+    </section>
+
+    <div id="addResourceModal{{ space.id }}" class="custom-modal">
+        <div class="modal-content-pink">
+            <header class="modal-header">
+                <h5>新增資源到 {{ space.name }}</h5>
+                <span class="close" onclick="closeModal('addResourceModal{{ space.id }}')">&times;</span>
+            </header>
+            <form action="{{ url_for('add_resource') }}" method="POST">
+                <input type="hidden" name="space_id" value="{{ space.id }}">
+                <div class="input-group">
+                    <label>資源名稱</label>
+                    <input type="text" name="name" placeholder="例如：座位 A-101" required>
+                </div>
+                <div class="input-group">
+                    <label>資源類型</label>
+                    <select name="resource_type">
+                        <option value="座位">座位</option>
+                        <option value="電腦">電腦</option>
+                        <option value="會議室">會議室</option>
+                        <option value="其他設備">其他設備</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>描述文字</label>
+                    <textarea name="description" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn-pink w-100">確認新增</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="addSpaceModal" class="custom-modal">
+    <div class="modal-content-pink">
+        <header class="modal-header">
+            <h5>新增管理空間</h5>
+            <span class="close" onclick="closeModal('addSpaceModal')">&times;</span>
+        </header>
+        <form action="{{ url_for('add_space') }}" method="POST">
+            <div class="input-group">
+                <label>空間名稱</label>
+                <input type="text" name="name" placeholder="例如：電機系館 3F 實驗室" required>
+            </div>
+            <div class="input-group">
+                <label>說明文字</label>
+                <textarea name="description" rows="3"></textarea>
+            </div>
+            <div class="input-group">
+                <label>圖片網址 (URL)</label>
+                <input type="text" name="image_url" placeholder="https://...">
+            </div>
+            <button type="submit" class="btn-pink w-100">儲存空間</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) { document.getElementById(id).style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+    // 點擊 Modal 外部可關閉
+    window.onclick = function (event) {
+        if (event.target.className === 'custom-modal') {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}
