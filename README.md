@@ -1,8 +1,13 @@
+# 貝殼｜空間預約系統
+A space booking system tailored for NTUT students, allowing easy reservation of various campus facilities.
+
+## Try It Out
+You can try out the application at [final.ntut.uk](https://final.ntut.uk).
 
 ![alt text](docs/image.png)
 ![alt text](docs/image2.png)
-# Deployment Guide
 
+# Deployment Guide
 ## Prerequisites
 - Python 3
 - Docker and Docker Compose
