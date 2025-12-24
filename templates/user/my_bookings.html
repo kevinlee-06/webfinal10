@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bookings-section">
+    <header class="section-header">
+        <h3 class="section-title">
+            <i class="bi bi-calendar2-day-fill"></i> 我的預約紀錄
+        </h3>
+        <p class="section-subtitle">追蹤申請進度，並管理您的預約時程</p>
+    </header>
+
+    {% if bookings %}
+    <div class="table-card">
+        <table class="pink-table">
+            <thead>
+                <tr>
+                    <th>資源名稱</th>
+                    <th>預約時段</th>
+                    <th>狀態</th>
+                    <th class="text-right">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>
+                        <div class="res-info">
+                            <span class="res-main">{{ b.resource.name }}</span>
+                            <span class="res-sub">{{ b.resource.space.name }}</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="time-info">
+                            <span class="time-date">
+                                <i class="bi bi-calendar-event"></i> {{ b.start_time.strftime('%Y-%m-%d') }} - {{
+                                b.end_time.strftime('%Y-%m-%d') }}
+                            </span>
+                            <span class="time-range">
+                                {{ b.start_time.strftime('%H:%M') }} - {{ b.end_time.strftime('%H:%M') }}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status-pill pill-{{ b.status.lower() }}">
+                            {% if b.status == 'Approved' %}
+                            已核准
+                            {% elif b.status == 'Pending' %}
+                            審核中
+                            {% elif b.status == 'Rejected' %}
+                            已拒絕
+                            {% elif b.status == 'Cancelled' %}
+                            已取消
+                            {% elif b.status == 'Draft' %}
+                            暫存中
+                            {% else %}
+                            {{ b.status }}
+                            {% endif %}
+                        </span>
+                    </td>
+
+                    <td class="text-right">
+                        <div class="action-wrapper">
+                            {# 1. 取消申請 / 取消暫存 #}
+                            {% if b.status == 'Pending' or (b.status == 'Draft' and b.start_time > now) %}
+                            <form action="{{ url_for('cancel_booking', booking_id=b.id) }}" method="POST">
+                                <button type="submit" class="btn-action btn-pink-outline"
+                                    onclick="return confirm('確定要取消此項申請或暫存嗎？')">
+                                    取消申請
+                                </button>
+                            </form>
+
+                            {# 2. 已核准狀態下的處理 #}
+                            {% elif b.status == 'Approved' %}
+                            {% if b.start_time > now %}
+                            <form action="{{ url_for('cancel_booking', booking_id=b.id) }}" method="POST">
+                                <button type="submit" class="btn-action btn-pink-filled"
+                                    onclick="return confirm('確定要取消預約嗎？')">
+                                    取消預約
+                                </button>
+                            </form>
+                            {% elif b.start_time <= now <=b.end_time %} <form
+                                action="{{ url_for('end_early', booking_id=b.id) }}" method="POST">
+                                <button type="submit" class="btn-action btn-green-filled"
+                                    onclick="return confirm('確定要提早結束使用嗎？')">
+                                    提早結束
+                                </button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted-light">預約已結束</span>
+                                {% endif %}
+
+                                {# 3. 其他狀態顯示提示 #}
+                                {% elif b.status == 'Draft' and b.start_time <= now %} <span class="text-muted-light">
+                                    暫存已過期</span>
+                                    {% else %}
+                                    <span class="text-muted-light">-</span>
+                                    {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state-card">
+        <div class="empty-icon">
+            <i class="bi bi-calendar-x"></i>
+        </div>
+        <h4>目前沒有預約紀錄</h4>
+        <p>您尚未發起任何空間預約，現在就去探索可用的場域吧！</p>
+        <a href="{{ url_for('home') }}" class="btn-pink">前往探索空間</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
