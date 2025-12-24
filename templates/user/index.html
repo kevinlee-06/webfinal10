@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="explorer-section">
+    <header class="explorer-header">
+        <h2 class="explorer-title"><i class="bi bi-geo-alt-fill"></i> 探索可用空間</h2>
+        <p class="explorer-subtitle">選擇一個您感興趣的場域，開始瀏覽可預約的資源</p>
+    </header>
+
+    <div class="space-grid">
+        {% for space in spaces %}
+        <article class="space-card">
+            <div class="space-image-wrapper">
+                <img src="{{ space.image_url or '/static/img/default_space.jpg' }}" alt="{{ space.name }}">
+                <div class="image-overlay">
+                    <a href="{{ url_for('view_space', space_id=space.id) }}">
+                        <span class="overlay-text">進入空間 <i class="bi bi-arrow-right-short"></i></span>
+                    </a>
+                </div>
+            </div>
+            <div class="space-content">
+                <h3 class="space-name">{{ space.name }}</h3>
+                <p class="space-desc">{{ space.description or '此空間暫時沒有詳細說明。' }}</p>
+                <div class="space-footer">
+                    <a href="{{ url_for('view_space', space_id=space.id) }}" class="btn-pink w-100 text-center">
+                        查看資源列表
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
