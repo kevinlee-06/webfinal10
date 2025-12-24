@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-icon">
+            <i class="bi bi-person-heart"></i>
+        </div>
+        
+        <header class="auth-header">
+            <h2>歡迎回來</h2>
+            <p>請輸入您的憑證以存取預約系統</p>
+        </header>
+
+        <form method="POST" class="auth-form">
+            <div class="input-group">
+                <label for="username"><i class="bi bi-person"></i> 使用者帳號</label>
+                <input type="text" id="username" name="username" placeholder="請輸入帳號" required autofocus>
+            </div>
+
+            <div class="input-group">
+                <label for="password"><i class="bi bi-key"></i> 登入密碼</label>
+                <input type="password" id="password" name="password" placeholder="請輸入密碼" required>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="btn-pink btn-block">
+                    立即登入 <i class="bi bi-arrow-right-short"></i>
+                </button>
+            </div>
+        </form>
+
+        <footer class="auth-footer">
+            <a href="{{ url_for('home') }}" class="back-link">
+                <i class="bi bi-house"></i> 返回首頁探索空間
+            </a>
+        </footer>
+    </div>
+</div>
+{% endblock %}
