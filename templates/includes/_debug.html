@@ -1,0 +1,41 @@
+<section class="debug-panel">
+    <div class="debug-card">
+        <header class="debug-header">
+            <h5 class="debug-title">
+                <i class="bi bi-terminal-fill"></i> System Debugger
+            </h5>
+            <span class="debug-badge">Developer Mode</span>
+        </header>
+
+        <div class="debug-grid">
+            <div class="debug-item">
+                <span class="debug-label">User ID:</span>
+                <span class="debug-value">{{ session.get('user_id', 'None') }}</span>
+                <span class="debug-label">Username:</span>
+                <span class="debug-value text-pink">{{ session.get('username', 'Guest') }}</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">Perm Mask:</span>
+                <span class="debug-value highlight-pink">{{ session.get('user_perm_mask', 0) }}</span>
+                <span class="debug-label">Current Path:</span>
+                <span class="debug-value code-font">{{ request.path }}</span>
+            </div>
+            <div class="debug-item" style="display: none;">
+                <span class="debug-label">Sys Time:</span>
+                <span class="debug-value">{{ now.strftime('%H:%M:%S') if now else 'N/A' }}</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">測試用帳號:</span>
+                <span class="debug-value">student</span>
+                <span class="debug-label">密碼:</span>
+                <span class="debug-value">student123</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">測試用帳號:</span>
+                <span class="debug-value">admin</span>
+                <span class="debug-label">密碼:</span>
+                <span class="debug-value">admin123</span>
+            </div>
+        </div>
+    </div>
+</section>
