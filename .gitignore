@@ -32,3 +32,4 @@ Thumbs.db
 .flaskenv
 secrets.json
 config.ini
+database/docker-compose.yaml
