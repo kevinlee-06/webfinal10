@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="perm-container">
+    <div class="perm-card">
+        <header class="perm-header">
+            <h3 class="perm-title"><i class="bi bi-shield-lock-fill"></i> 身份組權限管制</h3>
+            <p class="perm-subtitle">Linux-Style Bitmask Management</p>
+        </header>
+
+        <div class="user-info-section">
+            <span class="label">正在編輯使用者：</span>
+            <span class="username-tag">{{ target_user.username }}</span>
+        </div>
+
+        <form action="{{ url_for('manage_user_permissions', user_id=target_user.id) }}" method="POST" id="permForm">
+            <div class="perm-options-list">
+                <label class="perm-item">
+                    <input type="checkbox" class="perm-bit" value="4" {% if target_user.permission_mask|has_perm(4)
+                        %}checked{% endif %}>
+                    <div class="perm-content">
+                        <span class="perm-name">Read (4)</span>
+                        <span class="perm-desc">允許瀏覽空間資訊與資源列表</span>
+                    </div>
+                    <div class="custom-checkbox"></div>
+                </label>
+
+                <label class="perm-item">
+                    <input type="checkbox" class="perm-bit" value="2" {% if target_user.permission_mask|has_perm(2)
+                        %}checked{% endif %}>
+                    <div class="perm-content">
+                        <span class="perm-name">Write / Book (2)</span>
+                        <span class="perm-desc">允許發起新的空間或資源預約申請</span>
+                    </div>
+                    <div class="custom-checkbox"></div>
+                </label>
+
+                <label class="perm-item">
+                    <input type="checkbox" class="perm-bit" value="1" {% if target_user.permission_mask|has_perm(1)
+                        %}checked{% endif %}>
+                    <div class="perm-content">
+                        <span class="perm-name">Admin / Execute (1)</span>
+                        <span class="perm-desc">最高權限：審核預約、編輯與隱藏資源</span>
+                    </div>
+                    <div class="custom-checkbox"></div>
+                </label>
+            </div>
+
+            <div class="mask-display-box">
+                <span>計算後的權限數值 (Permission Mask)：</span>
+                <strong id="mask_value_display">{{ target_user.permission_mask }}</strong>
+                <input type="hidden" name="mask_value" id="mask_value_input" value="{{ target_user.permission_mask }}">
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn-cancel">返回列表</a>
+                <button type="submit" class="btn-pink">更新權限設定</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll('.perm-bit');
+    const display = document.getElementById('mask_value_display');
+    const hiddenInput = document.getElementById('mask_value_input');
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            let total = 0;
+            document.querySelectorAll('.perm-bit:checked').forEach(checked => {
+                total += parseInt(checked.value);
+            });
+            display.innerText = total;
+            hiddenInput.value = total;
+        });
+    });
+</script>
+{% endblock %}
