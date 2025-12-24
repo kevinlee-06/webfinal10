@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <header class="auth-header">
+            <div class="auth-icon"><i class="bi bi-person-plus-fill"></i></div>
+            <h2>新增使用者</h2>
+            <p>為系統建立新的成員帳號與權限</p>
+        </header>
+
+        <form method="POST" class="auth-form">
+            <div class="input-group">
+                <label><i class="bi bi-person"></i> 帳號名稱</label>
+                <input type="text" name="username" placeholder="請輸入學號或名稱" required>
+            </div>
+
+            <div class="input-group">
+                <label><i class="bi bi-shield-lock"></i> 登入密碼</label>
+                <input type="password" name="password" placeholder="請設定 6 位以上密碼" required>
+            </div>
+
+            <div class="input-group">
+                <label><i class="bi bi-check-all"></i> 確認密碼</label>
+                <input type="password" name="confirm_password" placeholder="再次輸入密碼" required>
+            </div>
+
+            <div class="input-group">
+                <label><i class="bi bi-key"></i> 預設權限遮罩 (Mask)</label>
+                <select name="perm_mask">
+                    <option value="6">一般使用者 (Read + Write = 6)</option>
+                    <option value="4">僅瀏覽者 (Read Only = 4)</option>
+                    <option value="7">系統管理員 (Full Access = 7)</option>
+                </select>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="btn-pink btn-block">確認建立帳號</button>
+                <br>
+                <a href="javascript:history.back()" class="btn-text w-100 text-center mt-3">取消返回</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
