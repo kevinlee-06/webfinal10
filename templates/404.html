@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h1 class="error-code">404</h1>
+        <h3 class="error-title">歐不！找不到這個頁面</h3>
+        <p class="error-text">
+            您嘗試訪問的頁面可能已被移動、刪除，或者網址輸入錯誤。<br>
+            別擔心，這就像是火車暫時誤點，我們陪您回到首頁。
+        </p>
+        <div class="error-actions">
+            <a href="{{ url_for('home') }}" class="btn-pink btn-lg">
+                <i class="bi bi-house-door-fill"></i> 回到首頁
+            </a>
+            <a href="javascript:history.back()" class="btn-outline-pink btn-lg">
+                <i class="bi bi-arrow-left"></i> 回到上一頁
+            </a>
+            <a href="javascript:alert('確定？');window.open('https://youtu.be/dQw4w9WgXcQ?si=RztKwo6_V854djaT', '_blank')"
+                class="btn-outline-pink btn-lg">
+                我已滿 18 歲
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block calendar_section %}{% endblock %}
