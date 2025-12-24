@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-panel">
+    <header class="panel-header">
+        <h3 class="panel-title">
+            <i class="bi bi-shield-lock-fill"></i> 預約審核中心
+        </h3>
+        <p class="panel-subtitle">在這裡管理所有使用者的空間申請狀態</p>
+    </header>
+
+    <div class="filter-controls">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="tableSearch" placeholder="搜尋使用者、資源或空間...">
+        </div>
+        <div class="filter-group">
+            <select id="statusFilter">
+                <option value="all">所有狀態</option>
+                <option value="pending">待審核 (Pending)</option>
+                <option value="approved">已通過 (Approved)</option>
+                <option value="rejected">已拒絕 (Rejected)</option>
+                <option value="draft">暫存 (Draft)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table" id="bookingTable">
+            <thead>
+                <tr>
+                    <th>使用者</th>
+                    <th>資源 / 空間</th>
+                    <th>預約時段</th>
+                    <th>人數</th>
+                    <th>狀態</th>
+                    <th>審核操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr class="booking-row">
+                    <td><span class="user-name">{{ b.user.username }}</span></td>
+                    <td>
+                        <div class="resource-info">
+                            <span class="res-name">{{ b.resource.name }}</span>
+                            <span class="space-tag">{{ b.resource.space.name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="time-box">
+                            <span class="date">{{ b.start_time.strftime('%Y-%m-%d') }} -
+                                {{b.end_time.strftime('%Y-%m-%d')}}</span>
+                            <br>
+                            <span class="range">{{ b.start_time.strftime('%H:%M') }} -
+                                {{b.end_time.strftime('%H:%M')}}</span>
+                        </div>
+                    </td>
+                    <td><i class="bi bi-people"></i> {{ b.attendees }} 人</td>
+                    <td>
+                        <span class="status-pill pill-{{ b.status.lower() }}" data-status="{{ b.status.lower() }}">
+                            {{ b.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <div class="action-group">
+                                <a href="{{ url_for('review_booking', booking_id=b.id, action='approve') }}"
+                                    class="action-btn btn-approve" title="同意">
+                                    <i class="bi bi-check-lg"></i>
+                                </a>
+                                <a href="{{ url_for('review_booking', booking_id=b.id, action='reject') }}"
+                                    class="action-btn btn-reject" title="拒絕">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                                <a href="{{ url_for('review_booking', booking_id=b.id, action='draft') }}"
+                                    class="action-btn btn-draft" title="退回暫存">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('tableSearch');
+        const statusFilter = document.getElementById('statusFilter');
+        const tableRows = document.querySelectorAll('.booking-row');
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filterStatus = statusFilter.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                // 抓取該列的所有文字內容進行搜尋
+                const text = row.innerText.toLowerCase();
+                // 抓取該列的狀態標籤
+                const status = row.querySelector('.status-pill').getAttribute('data-status');
+
+                const matchesSearch = text.includes(searchTerm);
+                const matchesStatus = (filterStatus === 'all' || status === filterStatus);
+
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+    });
+</script>
+{% endblock %}
