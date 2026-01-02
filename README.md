@@ -1,4 +1,4 @@
-# 貝殼｜空間預約系統
+# 貝殼 BackSpace｜空間預約系統
 A space booking system tailored for NTUT students, allowing easy reservation of various campus facilities.
 
 ## Try It Out
