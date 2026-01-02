@@ -47,7 +47,7 @@
 
             <div class="mask-display-box">
                 <span>計算後的權限數值 (Permission Mask)：</span>
-                <strong id="mask_value_display">{{ target_user.permission_mask }}</strong>
+                <strong id="mask-value-display">{{ target_user.permission_mask }}</strong>
                 <input type="hidden" name="mask_value" id="mask_value_input" value="{{ target_user.permission_mask }}">
             </div>
 
@@ -61,7 +61,7 @@
 
 <script>
     const checkboxes = document.querySelectorAll('.perm-bit');
-    const display = document.getElementById('mask_value_display');
+    const display = document.getElementById('mask-value-display');
     const hiddenInput = document.getElementById('mask_value_input');
 
     checkboxes.forEach(cb => {

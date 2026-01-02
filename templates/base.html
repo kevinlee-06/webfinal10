@@ -21,6 +21,9 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/zh-tw.js"></script>
 </head>
 
 <body>
@@ -90,10 +93,59 @@
     </footer>
 
     <script>
+        flatpickr('input[type="datetime-local"]', {
+            enableTime: true,           // 啟用時間選擇
+            dateFormat: "Y-m-d H:00",   // 強制格式化為整點
+            minDate: "today",           // 禁止選擇過去日期
+            time_24hr: true,            // 使用 24 小時制
+            minuteIncrement: 60,        // 分鐘跳轉間隔為 60 分鐘 (只選小時)
+            disableMobile: "true"       // 在手機上也使用這個漂亮的界面 (可選)
+        });
         if (/mobi|android|iPhone/i.test(navigator.userAgent)) {
             const span = document.getElementById('site-name');
             if (span) span.style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const bookingForm = document.querySelector('.booking-form');
+            const startInput = document.querySelector('input[name="start_time"]');
+            const endInput = document.querySelector('input[name="end_time"]');
+
+            if (startInput) {
+                const updateMinLimit = () => {
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    const minString = now.toISOString().slice(0, 16);
+                    startInput.min = minString;
+                };
+
+                updateMinLimit();
+                startInput.addEventListener('change', function () {
+                    if (endInput) {
+                        endInput.min = this.value;
+                    }
+                });
+            }
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', function (e) {
+                    const startTime = new Date(startInput.value);
+                    const endTime = endInput ? new Date(endInput.value) : null;
+                    const now = new Date();
+
+                    if (startTime < now) {
+                        e.preventDefault();
+                        alert('❌ 預約開始時間不能早於當前時間！');
+                        return;
+                    }
+
+                    if (endTime && endTime <= startTime) {
+                        e.preventDefault();
+                        alert('❌ 結束時間必須晚於開始時間！');
+                        return;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
