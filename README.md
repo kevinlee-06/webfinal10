@@ -72,7 +72,7 @@ SECRET_KEY=super-super-super-secret-key
 FLASK_ENV=development
 DATABASE_URL=postgresql://postgres:PASSWORD@localhost:5438/booking_db
 
-SITE_NAME=貝殼｜空間預約系統
+SITE_NAME=貝殼 BackSpace
 SITE_DESCRIPTION=專屬於北科學生的空間預約平台
 ```
 
