@@ -2,7 +2,7 @@
 {% block content %}
 <div class="detail-container">
     <nav class="breadcrumb-nav">
-        <a href="{{ url_for('home') }}">首頁</a>
+        <a href="{{ url_for('home') }}">Home</a>
         <i class="bi bi-chevron-right"></i>
         <span>{{ space.name }}</span>
     </nav>
@@ -10,8 +10,8 @@
     <div class="detail-grid">
         <main class="resource-section">
             <header class="resource-header">
-                <h3><i class="bi bi-list-stars"></i> 資源列表</h3>
-                <p>請選擇您想要預約的具體設備或座位</p>
+                <h3><i class="bi bi-list-stars"></i> Resource List</h3>
+                <p>Please select the specific equipment or seat you want to book</p>
             </header>
 
             <div class="resource-stack">
@@ -22,11 +22,11 @@
                             <h4 class="res-name">{{ res.name }}</h4>
                             <span class="type-tag">{{ res.resource_type }}</span>
                         </div>
-                        <p class="res-desc">{{ res.description or '此資源暫時沒有詳細描述。' }}</p>
+                        <p class="res-desc">{{ res.description or 'This resource has no detailed description yet.' }}</p>
                     </div>
                     <div class="res-action">
                         <a href="{{ url_for('create_booking', resource_id=res.id) }}" class="btn-pink">
-                            立即預約
+                            Book Now
                         </a>
                     </div>
                 </article>
@@ -40,10 +40,10 @@
                     <img src="{{ space.image_url or '/static/img/default_space.jpg' }}" alt="{{ space.name }}">
                 </div>
                 <div class="info-body">
-                    <h4>空間簡介</h4>
-                    <p>{{ space.description or '尚無簡介內容。' }}</p>
+                    <h4>Space Introduction</h4>
+                    <p>{{ space.description or 'No introduction available.' }}</p>
                     <div class="info-meta">
-                        <span class="meta-item"><i class="bi bi-info-circle"></i> 開放中</span>
+                        <span class="meta-item"><i class="bi bi-info-circle"></i> Open</span>
                     </div>
                 </div>
             </div>

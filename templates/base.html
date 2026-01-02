@@ -14,7 +14,7 @@
     <meta name="twitter:title" content="{% block twitter_title %}{{ site_name }}{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}{{ site_description }}{% endblock %}">
     <meta name="twitter:image" content="{{ url_for('static', filename='preview-image.png', _external=True) }}">
-    <title>空間預約 - {{ session.get('username', '訪客') }}</title>
+    <title>Space Reservation - {{ session.get('username', '訪客') }}</title>
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -34,20 +34,20 @@
                 <span id="site-name">{{ site_name }}</span>
             </a>
             <nav class="nav-menu">
-                <a href="{{ url_for('home') }}">所有空間</a>
+                <a href="{{ url_for('home') }}">All Spaces</a>
 
                 {% if session.get('user_id') %}
                 {% if session.get('user_perm_mask', 0)|has_perm(2) %}
-                <a href="{{ url_for('my_bookings') }}">我的預約</a>
+                <a href="{{ url_for('my_bookings') }}">My Bookings</a>
                 {% endif %}
 
                 {% if session.get('user_perm_mask', 0)|has_perm(1) %}
                 <div class="dropdown">
-                    <button class="dropbtn text-pink">管理控制台 <i class="bi bi-chevron-down"></i></button>
+                    <button class="dropbtn text-pink">Admin Console <i class="bi bi-chevron-down"></i></button>
                     <div class="dropdown-content">
-                        <a href="{{ url_for('admin_dashboard') }}">預約審核</a>
-                        <a href="{{ url_for('manage_assets') }}">資源管理</a>
-                        <a href="{{ url_for('add_user') }}">新增使用者</a>
+                        <a href="{{ url_for('admin_dashboard') }}">Booking Review</a>
+                        <a href="{{ url_for('manage_assets') }}">Asset Management</a>
+                        <a href="{{ url_for('add_user') }}">Add User</a>
                         <div class="divider"></div>
                     </div>
                 </div>
@@ -58,9 +58,9 @@
             <div class="nav-auth">
                 {% if session.get('user_id') %}
                 <span class="user-badge"><i class="bi bi-person-fill"></i> {{ session.get('username') }}</span>
-                <a href="{{ url_for('logout') }}" class="btn-outline-pink">登出</a>
+                <a href="{{ url_for('logout') }}" class="btn-outline-pink">Logout</a>
                 {% else %}
-                <a href="{{ url_for('login') }}" class="btn-pink">登入</a>
+                <a href="{{ url_for('login') }}" class="btn-pink">Login</a>
                 {% endif %}
             </div>
         </div>
@@ -82,7 +82,6 @@
         </section>
 
         {% block calendar_section %}
-        {# 這裡是預設行為：所有頁面都會顯示行事曆 #}
         {% include 'includes/_calendar.html' %}
         {% endblock %}
 
@@ -94,12 +93,12 @@
 
     <script>
         flatpickr('input[type="datetime-local"]', {
-            enableTime: true,           // 啟用時間選擇
-            dateFormat: "Y-m-d H:00",   // 強制格式化為整點
-            minDate: "today",           // 禁止選擇過去日期
-            time_24hr: true,            // 使用 24 小時制
-            minuteIncrement: 60,        // 分鐘跳轉間隔為 60 分鐘 (只選小時)
-            disableMobile: "true"       // 在手機上也使用這個漂亮的界面 (可選)
+            enableTime: true,
+            dateFormat: "Y-m-d H:00",
+            minDate: "today",            
+            time_24hr: true,
+            minuteIncrement: 60,
+            disableMobile: "true"
         });
         if (/mobi|android|iPhone/i.test(navigator.userAgent)) {
             const span = document.getElementById('site-name');
@@ -134,13 +133,13 @@
 
                     if (startTime < now) {
                         e.preventDefault();
-                        alert('❌ 預約開始時間不能早於當前時間！');
+                        alert('Reservation start time cannot be earlier than the current time!');
                         return;
                     }
 
                     if (endTime && endTime <= startTime) {
                         e.preventDefault();
-                        alert('❌ 結束時間必須晚於開始時間！');
+                        alert('End time must be later than start time!');
                         return;
                     }
                 });

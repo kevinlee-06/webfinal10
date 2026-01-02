@@ -15,17 +15,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+# Permission Decorator
 def require_perm(mask):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             user_id = session.get('user_id')
             if not user_id:
-                flash("請先登入", "danger")
+                flash("Please log in first.", "danger")
                 return redirect(url_for('login'))
             user = User.query.get(user_id)
             if not user or not (user.permission_mask & mask):
-                flash("權限不足 (Error: Permission Denied)", "danger")
+                flash("Access Denied: You do not have sufficient permissions.", "danger")
                 return redirect(url_for('home'))
             return f(*args, **kwargs)
         return decorated_function
@@ -46,15 +47,15 @@ def login():
             session['user_id'] = user.id
             session['username'] = user.username
             session['user_perm_mask'] = user.permission_mask
-            flash(f"歡迎回來，{username}！", "success")
+            flash(f"Welcome back, {username}!", "success")
             return redirect(url_for('admin_dashboard' if user.permission_mask & Permission.ADMIN else 'home'))
-        flash("帳號或密碼錯誤", "danger")
+        flash("Invalid username or password.", "danger")
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash("已成功登出", "info")
+    flash("Successfully logged out.", "info")
     return redirect(url_for('home'))
 
 @app.route('/admin/add_user', methods=['GET', 'POST'])
@@ -65,15 +66,17 @@ def add_user():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
         perm_mask = int(request.form.get('perm_mask', 6))
+        
         if not username or not password:
-            flash("帳號與密碼不能為空", "error")
+            flash("Username and password cannot be empty.", "error")
             return redirect(url_for('add_user'))
         if password != confirm_password:
-            flash("兩次密碼輸入不一致", "error")
+            flash("Passwords do not match.", "error")
             return redirect(url_for('add_user'))
         if User.query.filter_by(username=username).first():
-            flash("此帳號已存在", "error")
+            flash("Username already exists.", "error")
             return redirect(url_for('add_user'))
+            
         new_user = User(
             username=username,
             password_hash=generate_password_hash(password, method='pbkdf2:sha256'),
@@ -82,11 +85,11 @@ def add_user():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash(f"使用者 {username} 建立成功", "success")
+            flash(f"User {username} created successfully.", "success")
             return redirect(url_for('manage_assets'))
         except Exception as e:
             db.session.rollback()
-            flash(f"錯誤: {str(e)}", "error")
+            flash(f"Error: {str(e)}", "error")
     return render_template('admin/add_user.html')
 
 @app.route('/')
@@ -108,16 +111,18 @@ def get_bookings_json():
         bookings = Booking.query.all()
     else:
         bookings = Booking.query.filter_by(status='Approved').all()
+    
     events = []
     status_colors = {
         'Approved': '#c3edc0', 'Pending': '#fdf2b3', 'Rejected': '#fbc7d4',
         'Cancelled': '#e9ecef', 'Draft': '#f3f0ff'
     }
+    
     for b in bookings:
         color = status_colors.get(b.status, '#ff8fa3')
         events.append({
             'id': b.id,
-            'title': f"{b.resource.name} ({b.user.username})" if is_admin else f"{b.resource.name} (已預訂)",
+            'title': f"{b.resource.name} ({b.user.username})" if is_admin else f"{b.resource.name} (Reserved)",
             'start': b.start_time.isoformat(),
             'end': b.end_time.isoformat(),
             'backgroundColor': color,
@@ -134,18 +139,22 @@ def create_booking(resource_id):
     if request.method == 'POST':
         start_dt = datetime.fromisoformat(request.form['start_time'])
         end_dt = datetime.fromisoformat(request.form['end_time'])
+        
         if end_dt <= start_dt:
-            flash("結束時間必須晚於開始時間", "danger")
+            flash("End time must be later than start time.", "danger")
             return render_template('user/booking_form.html', resource=resource)
+            
         conflict = Booking.query.filter(
             Booking.resource_id == resource_id,
             Booking.status == 'Approved',
             Booking.start_time < end_dt,
             Booking.end_time > start_dt
         ).first()
+        
         if conflict:
-            flash(f"該時段已被佔用", "danger")
+            flash("This time slot is already occupied.", "danger")
             return render_template('user/booking_form.html', resource=resource)
+            
         new_booking = Booking(
             user_id=session['user_id'], resource_id=resource_id,
             start_time=start_dt, end_time=end_dt,
@@ -153,7 +162,7 @@ def create_booking(resource_id):
         )
         db.session.add(new_booking)
         db.session.commit()
-        flash("預約申請已送出，等待審核。", "success")
+        flash("Booking request submitted and awaiting approval.", "success")
         return redirect(url_for('my_bookings'))
     return render_template('user/booking_form.html', resource=resource)
 
@@ -169,11 +178,11 @@ def my_bookings():
 def cancel_booking(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     if booking.user_id != session.get('user_id'):
-        flash("無權操作", "danger")
+        flash("Unauthorized action.", "danger")
     elif booking.status in ['Pending', 'Approved', 'Draft']:
         booking.status = 'Cancelled'
         db.session.commit()
-        flash("預約已取消", "success")
+        flash("Booking successfully cancelled.", "success")
     return redirect(url_for('my_bookings'))
 
 @app.route('/booking/end_early/<int:booking_id>', methods=['POST'])
@@ -182,11 +191,11 @@ def end_early(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     now = datetime.now()
     if booking.user_id != session.get('user_id'):
-        flash("無權操作", "danger")
+        flash("Unauthorized action.", "danger")
     elif booking.status == 'Approved' and booking.start_time <= now <= booking.end_time:
         booking.end_time = now
         db.session.commit()
-        flash("資源已提早釋放", "success")
+        flash("Resource released early.", "success")
     return redirect(url_for('my_bookings'))
 
 @app.route('/admin/dashboard')
@@ -202,7 +211,7 @@ def review_booking(booking_id, action):
     status_map = {'approve': 'Approved', 'reject': 'Rejected', 'draft': 'Draft'}
     booking.status = status_map.get(action, 'Pending')
     db.session.commit()
-    flash(f"狀態已更新: {booking.status}", "info")
+    flash(f"Status updated: {booking.status}", "info")
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/assets')
@@ -266,7 +275,7 @@ def edit_resource(res_id):
 def delete_resource(res_id):
     res = Resource.query.get_or_404(res_id)
     if res.bookings:
-        flash("無法刪除：已有預約紀錄", "danger")
+        flash("Deletion failed: Booking records associated with this resource exist.", "danger")
     else:
         db.session.delete(res)
         db.session.commit()
@@ -304,13 +313,14 @@ def page_not_found(e):
 
 @app.errorhandler(403)
 def forbidden(e):
-    return render_template('404.html', error_type="403", message="存取被拒絕：權限不足"), 403
+    return render_template('404.html', error_type="403", message="Access Forbidden: Insufficient Permissions"), 403
 
 @app.context_processor
 def inject_site_info():
     return {
-        'site_name': os.getenv('SITE_NAME', '空間預約系統'),
+        'site_name': os.getenv('SITE_NAME', 'Space Booking System'),
         'site_description': os.getenv('SITE_DESCRIPTION', '')
     }
+
 if __name__ == '__main__':
     app.run(debug=True, port=5080)
