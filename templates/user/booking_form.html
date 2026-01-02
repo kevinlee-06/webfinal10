@@ -6,36 +6,37 @@
             <div class="header-icon">
                 <i class="bi bi-calendar-heart"></i>
             </div>
-            <h3>確認預約</h3>
+            <h3>Confirm Booking</h3>
             <p class="resource-target">{{ resource.space.name }} · <strong>{{ resource.name }}</strong></p>
         </header>
 
         <form method="POST" class="booking-form">
             <div class="input-section">
                 <div class="input-field">
-                    <label><i class="bi bi-clock"></i> 開始時間</label>
+                    <label><i class="bi bi-clock"></i> Start Time</label>
                     <input type="datetime-local" id="start_time" name="start_time" required>
                 </div>
 
                 <div class="input-field">
-                    <label><i class="bi bi-clock-history"></i> 結束時間</label>
+                    <label><i class="bi bi-clock-history"></i> End Time</label>
                     <input type="datetime-local" name="end_time" required>
                 </div>
 
                 <div class="input-field">
-                    <label><i class="bi bi-people"></i> 預約人數</label>
+                    <label><i class="bi bi-people"></i> Number of Attendees</label>
                     <input type="number" name="attendees" value="1" min="1" required>
                 </div>
             </div>
 
             <div class="info-notice">
                 <i class="bi bi-info-circle-fill"></i>
-                <span>提交後將由管理員進行人工審核，核准後會更新狀態。</span>
+                <span>Once submitted, your request will be reviewed by an administrator. You will be notified when the
+                    status is updated.</span>
             </div>
 
             <div class="form-buttons">
-                <a href="javascript:history.back()" class="btn-text">返回</a>
-                <button type="submit" class="btn-pink">確認提交預約</button>
+                <a href="javascript:history.back()" class="btn-text">Back</a>
+                <button type="submit" class="btn-pink">Submit Booking Request</button>
             </div>
         </form>
     </div>

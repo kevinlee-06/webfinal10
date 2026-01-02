@@ -2,8 +2,8 @@
     <div class="section-card">
         <header class="section-header-row">
             <div class="title-group">
-                <h4 class="section-title"><i class="bi bi-calendar"></i> 預約時程概覽</h4>
-                <p class="section-subtitle">點擊日曆中的事件可查看詳情</p>
+                <h4 class="section-title"><i class="bi bi-calendar"></i> Booking Schedule Overview</h4>
+                <p class="section-subtitle">Click on an event in the calendar to view details</p>
                 <br>
             </div>
         </header>
@@ -19,7 +19,7 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            locale: 'zh-tw',
+            locale: 'en', // Changed from zh-tw to English
             themeSystem: 'standard',
             events: '/api/bookings',
             headerToolbar: {
@@ -29,10 +29,10 @@
             },
             eventClick: function (info) {
                 console.log('Event:', info.event);
-                alert('預約詳情：' + info.event.title);
+                alert('Booking Details: ' + info.event.title);
             },
             buttonText: {
-                today: '今天'
+                today: 'Today'
             },
             height: 650
         });

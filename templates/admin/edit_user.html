@@ -3,12 +3,12 @@
 <div class="perm-container">
     <div class="perm-card">
         <header class="perm-header">
-            <h3 class="perm-title"><i class="bi bi-shield-lock-fill"></i> 身份組權限管制</h3>
+            <h3 class="perm-title"><i class="bi bi-shield-lock-fill"></i> User Role Permissions</h3>
             <p class="perm-subtitle">Linux-Style Bitmask Management</p>
         </header>
 
         <div class="user-info-section">
-            <span class="label">正在編輯使用者：</span>
+            <span class="label">Editing User:</span>
             <span class="username-tag">{{ target_user.username }}</span>
         </div>
 
@@ -19,7 +19,7 @@
                         %}checked{% endif %}>
                     <div class="perm-content">
                         <span class="perm-name">Read (4)</span>
-                        <span class="perm-desc">允許瀏覽空間資訊與資源列表</span>
+                        <span class="perm-desc">Allows browsing space info and resource lists</span>
                     </div>
                     <div class="custom-checkbox"></div>
                 </label>
@@ -29,7 +29,7 @@
                         %}checked{% endif %}>
                     <div class="perm-content">
                         <span class="perm-name">Write / Book (2)</span>
-                        <span class="perm-desc">允許發起新的空間或資源預約申請</span>
+                        <span class="perm-desc">Allows creating new space or resource booking requests</span>
                     </div>
                     <div class="custom-checkbox"></div>
                 </label>
@@ -39,21 +39,21 @@
                         %}checked{% endif %}>
                     <div class="perm-content">
                         <span class="perm-name">Admin / Execute (1)</span>
-                        <span class="perm-desc">最高權限：審核預約、編輯與隱藏資源</span>
+                        <span class="perm-desc">Full access: Approve bookings, edit, and hide resources</span>
                     </div>
                     <div class="custom-checkbox"></div>
                 </label>
             </div>
 
             <div class="mask-display-box">
-                <span>計算後的權限數值 (Permission Mask)：</span>
+                <span>Calculated Permission Mask:</span>
                 <strong id="mask-value-display">{{ target_user.permission_mask }}</strong>
                 <input type="hidden" name="mask_value" id="mask_value_input" value="{{ target_user.permission_mask }}">
             </div>
 
             <div class="form-actions">
-                <a href="{{ url_for('admin_dashboard') }}" class="btn-cancel">返回列表</a>
-                <button type="submit" class="btn-pink">更新權限設定</button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn-cancel">Back to List</a>
+                <button type="submit" class="btn-pink">Update Permissions</button>
             </div>
         </form>
     </div>

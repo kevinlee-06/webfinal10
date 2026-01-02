@@ -6,21 +6,21 @@
             <i class="bi bi-exclamation-triangle-fill"></i>
         </div>
         <h1 class="error-code">404</h1>
-        <h3 class="error-title">歐不！找不到這個頁面</h3>
+        <h3 class="error-title">Oops! Page Not Found</h3>
         <p class="error-text">
-            您嘗試訪問的頁面可能已被移動、刪除，或者網址輸入錯誤。<br>
-            別擔心，這就像是火車暫時誤點，我們陪您回到首頁。
+            The page you tried to access may have been moved, deleted, or the URL is incorrect.<br>
+            Don't worry, it's like a train running a bit late. We'll take you back to the home page.
         </p>
         <div class="error-actions">
             <a href="{{ url_for('home') }}" class="btn-pink btn-lg">
-                <i class="bi bi-house-door-fill"></i> 回到首頁
+                <i class="bi bi-house-door-fill"></i> Back to Home
             </a>
             <a href="javascript:history.back()" class="btn-outline-pink btn-lg">
-                <i class="bi bi-arrow-left"></i> 回到上一頁
+                <i class="bi bi-arrow-left"></i> Back to Previous Page
             </a>
-            <a href="javascript:alert('確定？');window.open('https://youtu.be/dQw4w9WgXcQ?si=RztKwo6_V854djaT', '_blank')"
+            <a href="javascript:alert('Are you sure?');window.open('https://youtu.be/dQw4w9WgXcQ?si=RztKwo6_V854djaT', '_blank')"
                 class="btn-outline-pink btn-lg">
-                我已滿 18 歲
+                I am 18 or older
             </a>
         </div>
     </div>
