@@ -7,6 +7,9 @@ You can try out the application at [final.ntut.uk](https://final.ntut.uk).
 ![alt text](docs/image.png)
 ![alt text](docs/image2.png)
 
+## Video Demo
+https://youtu.be/IM0m7_t7pOk
+
 # Deployment Guide
 ## Prerequisites
 - Python 3
